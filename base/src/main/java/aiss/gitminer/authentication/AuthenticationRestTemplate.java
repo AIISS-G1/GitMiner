@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") // RestTemplate bean must be configured in subprojects
 public class AuthenticationRestTemplate {
 
-    @Autowired private RestTemplate restTemplate;
+    @Autowired(required = false) private RestTemplate restTemplate;
 
     public <T> T getForObject(String url, Class<T> responseType, String token) {
         HttpEntity<String> httpEntity = new HttpEntity<>("parameters", buildAuthenticationHeader(token));
