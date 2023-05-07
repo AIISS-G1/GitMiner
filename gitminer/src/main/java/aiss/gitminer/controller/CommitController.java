@@ -2,6 +2,7 @@ package aiss.gitminer.controller;
 
 import aiss.gitminer.exception.EntityNotFoundException;
 import aiss.gitminer.model.Commit;
+import aiss.gitminer.pagination.Pagination;
 import aiss.gitminer.repository.CommitRepository;
 import aiss.gitminer.service.CommitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,10 @@ public class CommitController {
     @Autowired private CommitRepository commitRepository;
 
     @GetMapping("/commits")
-    public List<Commit> findAll(@RequestParam(required = false) String email) {
-        return commitService.findAll(email);
+    public List<Commit> findAll(@RequestParam(required = false) String email,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "20") int pageSize) {
+        return commitService.findAll(email, Pagination.of(page, pageSize));
     }
 
     @PostMapping("/commits")
