@@ -1,11 +1,10 @@
 package aiss.gitminer.authentication;
 
+import aiss.gitminer.exception.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -14,8 +13,15 @@ public class AuthenticationRestTemplate {
     @Autowired(required = false) private RestTemplate restTemplate;
 
     public <T> T getForObject(String url, Class<T> responseType, String token) {
-        HttpEntity<String> httpEntity = new HttpEntity<>("parameters", buildAuthenticationHeader(token));
-        return this.restTemplate.exchange(url, HttpMethod.GET, httpEntity, responseType).getBody();
+        if (token == null)
+            throw new AuthenticationException(HttpStatus.UNAUTHORIZED);
+
+        try {
+            HttpEntity<String> httpEntity = new HttpEntity<>("parameters", buildAuthenticationHeader(token));
+            return this.restTemplate.exchange(url, HttpMethod.GET, httpEntity, responseType).getBody();
+        } catch (HttpClientErrorException.Unauthorized | HttpClientErrorException.Forbidden e) {
+            throw new AuthenticationException(e);
+        }
     }
 
     public static HttpHeaders buildAuthenticationHeader(String token) {
