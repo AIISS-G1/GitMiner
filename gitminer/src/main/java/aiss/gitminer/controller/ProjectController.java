@@ -28,6 +28,7 @@ public class ProjectController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Project create(@RequestBody Project project) {
         return projectRepository.save(project);
     }

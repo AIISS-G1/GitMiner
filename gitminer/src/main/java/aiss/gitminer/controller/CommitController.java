@@ -6,6 +6,7 @@ import aiss.gitminer.pagination.Pagination;
 import aiss.gitminer.repository.CommitRepository;
 import aiss.gitminer.service.CommitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class CommitController {
     }
 
     @PostMapping("/commits")
+    @ResponseStatus(HttpStatus.CREATED)
     public Commit create(@RequestBody Commit commit) {
         return commitRepository.save(commit);
     }
