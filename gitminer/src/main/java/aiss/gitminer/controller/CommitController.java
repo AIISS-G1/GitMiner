@@ -3,7 +3,6 @@ package aiss.gitminer.controller;
 import aiss.gitminer.exception.EntityNotFoundException;
 import aiss.gitminer.model.Commit;
 import aiss.gitminer.pagination.Pagination;
-import aiss.gitminer.repository.CommitRepository;
 import aiss.gitminer.service.CommitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import java.util.List;
 public class CommitController {
 
     @Autowired private CommitService commitService;
-    @Autowired private CommitRepository commitRepository;
 
     @GetMapping("/commits")
     public List<Commit> findAll(@RequestParam(required = false) String email,
@@ -24,19 +22,14 @@ public class CommitController {
         return commitService.findAll(email, Pagination.of(page, pageSize));
     }
 
+    @GetMapping("/commits/{id}")
+    public Commit findById(@PathVariable String id) {
+        return commitService.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
     @PostMapping("/commits")
     @ResponseStatus(HttpStatus.CREATED)
     public Commit create(@RequestBody Commit commit) {
-        return commitRepository.save(commit);
+        return commitService.save(commit);
     }
-
-    @GetMapping("/commits/{id}")
-    public Commit findById(@PathVariable String id) {
-        return commitRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
-
-//    @GetMapping("/project/{id}/commits")
-//    public List<Commit> getFromProject() {
-//        return commitRepository.findBy()
-//    }
 }

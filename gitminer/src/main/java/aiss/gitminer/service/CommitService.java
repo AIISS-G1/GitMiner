@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommitService {
@@ -20,5 +21,13 @@ public class CommitService {
     public List<Commit> findAll(String email, Pageable pageable) {
         if (email == null) return this.findAll(pageable);
         return commitRepository.findByAuthorEmail(email, pageable);
+    }
+
+    public Optional<Commit> findById(String id) {
+        return commitRepository.findById(id);
+    }
+
+    public Commit save(Commit commit) {
+        return commitRepository.save(commit);
     }
 }
