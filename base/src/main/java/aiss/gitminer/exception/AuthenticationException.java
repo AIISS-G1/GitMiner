@@ -12,6 +12,6 @@ public class AuthenticationException extends ResponseStatusException {
     }
 
     public AuthenticationException(HttpStatus status) {
-        super(status, "Service API responded with an " + status + " error.");
+        super(status, "Service API responded with a " + status + " error.");
     }
 }
