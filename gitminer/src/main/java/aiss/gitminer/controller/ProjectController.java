@@ -1,7 +1,6 @@
 package aiss.gitminer.controller;
 
 import aiss.gitminer.exception.EntityNotFoundException;
-import aiss.gitminer.model.Commit;
 import aiss.gitminer.model.Project;
 import aiss.gitminer.pagination.Pagination;
 import aiss.gitminer.repository.ProjectRepository;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +20,11 @@ import java.util.List;
 @RequestMapping("/projects")
 public class ProjectController {
 
-    @Autowired private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+
+    public ProjectController(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     @Operation(
             summary = "List of projects",

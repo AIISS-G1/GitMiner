@@ -2,7 +2,6 @@ package aiss.gitminer.service;
 
 import aiss.gitminer.model.Commit;
 import aiss.gitminer.repository.CommitRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +11,11 @@ import java.util.Optional;
 @Service
 public class CommitService {
 
-    @Autowired private CommitRepository commitRepository;
+    private final CommitRepository commitRepository;
+
+    public CommitService(CommitRepository commitRepository) {
+        this.commitRepository = commitRepository;
+    }
 
     public List<Commit> findAll(Pageable pageable) {
         return commitRepository.findAll(pageable).getContent();

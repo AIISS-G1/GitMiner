@@ -2,7 +2,6 @@ package aiss.gitminer.controller;
 
 import aiss.gitminer.exception.EntityNotFoundException;
 import aiss.gitminer.model.Commit;
-import aiss.gitminer.model.Issue;
 import aiss.gitminer.pagination.Pagination;
 import aiss.gitminer.service.CommitService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +19,11 @@ import java.util.List;
 @RestController
 public class CommitController {
 
-    @Autowired private CommitService commitService;
+    private final CommitService commitService;
+
+    public CommitController(CommitService commitService) {
+        this.commitService = commitService;
+    }
 
     @Operation(
             summary = "List of commits",

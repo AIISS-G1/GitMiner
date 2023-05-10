@@ -1,7 +1,6 @@
 package aiss.gitminer.controller;
 
 import aiss.gitminer.exception.EntityNotFoundException;
-import aiss.gitminer.model.Project;
 import aiss.gitminer.model.User;
 import aiss.gitminer.pagination.Pagination;
 import aiss.gitminer.repository.UserRepository;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +19,11 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Operation(
             summary = "List of users",

@@ -1,10 +1,8 @@
 package aiss.gitminer.controller;
 
 import aiss.gitminer.exception.EntityNotFoundException;
-import aiss.gitminer.model.Comment;
 import aiss.gitminer.model.Issue;
 import aiss.gitminer.pagination.Pagination;
-import aiss.gitminer.repository.IssueRepository;
 import aiss.gitminer.service.IssueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +18,11 @@ import java.util.List;
 @RequestMapping("/issues")
 public class IssueController {
 
-    @Autowired private IssueService issueService;
+    private final IssueService issueService;
+
+    public IssueController(IssueService issueService) {
+        this.issueService = issueService;
+    }
 
     @Operation(
             summary = "List of issues",
