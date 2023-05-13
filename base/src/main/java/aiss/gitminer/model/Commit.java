@@ -19,6 +19,7 @@ public class Commit {
     private String id;
 
     @JsonProperty("title")
+    @Column(columnDefinition="TEXT")
     private String title;
 
     @JsonProperty("message")
