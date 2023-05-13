@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.Instant;
 
 @Entity
 @Table
@@ -31,8 +33,8 @@ public class Commit {
     private String authorEmail;
 
     @JsonProperty("authored_date")
-    @NotEmpty(message = "Author date cannot be empty.")
-    private String authoredDate;
+    @NotNull(message = "Author date cannot be empty.")
+    private Instant authoredDate;
 
     @JsonProperty("committer_name")
     @NotEmpty(message = "Committer name cannot be empty.")
@@ -42,8 +44,8 @@ public class Commit {
     private String committerEmail;
 
     @JsonProperty("committed_date")
-    @NotEmpty(message = "Committer date cannot be empty.")
-    private String committedDate;
+    @NotNull(message = "Committer date cannot be empty.")
+    private Instant committedDate;
 
     @JsonProperty("web_url")
     @NotEmpty(message = "URL cannot be empty.")
@@ -53,8 +55,8 @@ public class Commit {
         // Constructor for Jackson
     }
 
-    public Commit(String id, String title, String message, String authorName, String authorEmail, String authoredDate,
-                  String committerName, String committerEmail, String committedDate, String webUrl) {
+    public Commit(String id, String title, String message, String authorName, String authorEmail, Instant authoredDate,
+                  String committerName, String committerEmail, Instant committedDate, String webUrl) {
         this.id = id;
         this.title = title;
         this.message = message;
@@ -107,11 +109,11 @@ public class Commit {
         this.authorEmail = authorEmail;
     }
 
-    public String getAuthoredDate() {
+    public Instant getAuthoredDate() {
         return authoredDate;
     }
 
-    public void setAuthoredDate(String authoredDate) {
+    public void setAuthoredDate(Instant authoredDate) {
         this.authoredDate = authoredDate;
     }
 
@@ -131,11 +133,11 @@ public class Commit {
         this.committerEmail = committerEmail;
     }
 
-    public String getCommittedDate() {
+    public Instant getCommittedDate() {
         return committedDate;
     }
 
-    public void setCommittedDate(String committedDate) {
+    public void setCommittedDate(Instant committedDate) {
         this.committedDate = committedDate;
     }
 
