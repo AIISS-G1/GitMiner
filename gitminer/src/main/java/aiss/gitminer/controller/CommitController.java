@@ -77,25 +77,4 @@ public class CommitController {
     public Commit findById(@PathVariable String id) {
         return commitService.findById(id).orElseThrow(EntityNotFoundException::new);
     }
-
-    @Operation(
-            summary = "Create a commit",
-            description = "Create a commit",
-            tags = {"commit","post"}
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Commit successfully created",
-                    content = { @Content(schema = @Schema(implementation = Commit.class),
-                            mediaType = "application/json") }),
-            @ApiResponse(
-                    responseCode = "404",
-                    description="Commit not successfully created",
-                    content = { @Content(schema = @Schema()) })})
-    @PostMapping("/commits")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Commit create(@RequestBody Commit commit) {
-        return commitService.save(commit);
-    }
 }
