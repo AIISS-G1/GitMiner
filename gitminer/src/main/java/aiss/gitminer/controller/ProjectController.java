@@ -2,9 +2,11 @@ package aiss.gitminer.controller;
 
 import aiss.gitminer.exception.EntityNotFoundException;
 import aiss.gitminer.model.Commit;
+import aiss.gitminer.model.Issue;
 import aiss.gitminer.model.Project;
 import aiss.gitminer.repository.ProjectRepository;
 import aiss.gitminer.service.CommitService;
+import aiss.gitminer.service.IssueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,10 +29,12 @@ public class ProjectController {
 
     private final ProjectRepository projectRepository;
     private final CommitService commitService;
+    private final IssueService issueService;
 
-    public ProjectController(ProjectRepository projectRepository, CommitService commitService) {
+    public ProjectController(ProjectRepository projectRepository, CommitService commitService, IssueService issueService) {
         this.projectRepository = projectRepository;
         this.commitService = commitService;
+        this.issueService = issueService;
     }
 
     @Operation(
@@ -107,23 +111,58 @@ public class ProjectController {
     )
     @ApiResponse(
             responseCode = "404",
-            description = "Commit not found",
+            description = "Project not found",
             content = @Content()
     )
     @PageableAsQueryParam
     @GetMapping("/{id}/commits")
-    public List<Commit> findAllByProject(@PathVariable String id,
-                                         @RequestParam(required = false) String authorEmail,
-                                         @RequestParam(required = false) String committerEmail,
-                                         @RequestParam(required = false) Instant sinceAuthoredDate,
-                                         @RequestParam(required = false) Instant untilAuthoredDate,
-                                         @RequestParam(required = false) Instant sinceCommittedDate,
-                                         @RequestParam(required = false) Instant untilCommittedDate,
-                                         @Parameter(hidden = true) Pageable pageable) {
+    public List<Commit> findCommits(@PathVariable String id,
+                                    @RequestParam(required = false) String authorEmail,
+                                    @RequestParam(required = false) String committerEmail,
+                                    @RequestParam(required = false) Instant sinceAuthoredDate,
+                                    @RequestParam(required = false) Instant untilAuthoredDate,
+                                    @RequestParam(required = false) Instant sinceCommittedDate,
+                                    @RequestParam(required = false) Instant untilCommittedDate,
+                                    @Parameter(hidden = true) Pageable pageable) {
         if (!this.projectRepository.existsById(id))
             throw new EntityNotFoundException();
 
         return commitService.findAll(id, authorEmail, committerEmail, sinceAuthoredDate, untilAuthoredDate,
                 sinceCommittedDate, untilCommittedDate, pageable).getContent();
+    }
+
+    @Operation(
+            summary = "Get project issues",
+            description = "List of all issues of the specified project",
+            tags = {"Issue", "get"}
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Issue list",
+            content = @Content(schema = @Schema(implementation = Issue[].class), mediaType = "application/json")
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Project not found",
+            content = @Content()
+    )
+    @PageableAsQueryParam
+    @GetMapping("/{id}/issues")
+    public List<Issue> findIssues(@PathVariable String id,
+                                  @RequestParam(required = false) String title,
+                                  @RequestParam(required = false) String state,
+                                  @RequestParam(required = false) String authorId,
+                                  @RequestParam(required = false) Instant sinceCreatedAt,
+                                  @RequestParam(required = false) Instant untilCreatedAt,
+                                  @RequestParam(required = false) Instant sinceUpdatedAt,
+                                  @RequestParam(required = false) Instant untilUpdatedAt,
+                                  @RequestParam(required = false) Instant sinceClosedAt,
+                                  @RequestParam(required = false) Instant untilClosedAt,
+                                  @Parameter(hidden = true) Pageable pageable) {
+        if (!this.projectRepository.existsById(id))
+            throw new EntityNotFoundException();
+
+        return this.issueService.findAll(id, title, state, authorId, sinceCreatedAt, untilCreatedAt, sinceUpdatedAt,
+                untilUpdatedAt, sinceClosedAt, untilClosedAt, pageable).getContent();
     }
 }
