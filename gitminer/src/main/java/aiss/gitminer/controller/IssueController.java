@@ -14,6 +14,7 @@ import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @Tag(name = "Issue", description = "Issue Management API")
@@ -44,9 +45,18 @@ public class IssueController {
                     content = {@Content(schema = @Schema())})})
     @PageableAsQueryParam
     @GetMapping
-    public List<Issue> findAll(@RequestParam(required = false) String state,
+    public List<Issue> findAll(@RequestParam(required = false) String title,
+                               @RequestParam(required = false) String state,
+                               @RequestParam(required = false) String authorId,
+                               @RequestParam(required = false) Instant sinceCreatedAt,
+                               @RequestParam(required = false) Instant untilCreatedAt,
+                               @RequestParam(required = false) Instant sinceUpdatedAt,
+                               @RequestParam(required = false) Instant untilUpdatedAt,
+                               @RequestParam(required = false) Instant sinceClosedAt,
+                               @RequestParam(required = false) Instant untilClosedAt,
                                @Parameter(hidden = true) Pageable pageable) {
-        return issueService.findAll(state, pageable).getContent();
+        return issueService.findAll(title, state, authorId, sinceCreatedAt, untilCreatedAt, sinceUpdatedAt, untilUpdatedAt,
+                sinceClosedAt, untilClosedAt, pageable).getContent();
     }
 
     @Operation(
