@@ -7,13 +7,10 @@ import aiss.gitminer.repository.IssueRepository;
 import aiss.gitminer.service.CommentService;
 import aiss.gitminer.service.IssueService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +19,7 @@ import java.util.List;
 
 @Tag(name = "Issue", description = "Issue Management API")
 @RestController
-@RequestMapping("/issues")
+@RequestMapping(value = "/issues", produces = "application/json")
 public class IssueController {
 
     private final IssueRepository issueRepository;
@@ -36,21 +33,13 @@ public class IssueController {
     }
 
     @Operation(
-            summary = "List of issues",
-            description = "List of all issues",
-            tags = {"issue", "get"}
+            summary = "List all issues",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Issue list",
-                    content = {@Content(schema = @Schema(implementation = Issue.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Issue not found",
-                    content = {@Content(schema = @Schema())})})
-    @PageableAsQueryParam
+    @ApiResponse(
+            responseCode = "200",
+            description = "The issue list"
+    )
     @GetMapping
     public List<Issue> findAll(@RequestParam(required = false) String title,
                                @RequestParam(required = false) String state,
@@ -61,26 +50,24 @@ public class IssueController {
                                @RequestParam(required = false) Instant untilUpdatedAt,
                                @RequestParam(required = false) Instant sinceClosedAt,
                                @RequestParam(required = false) Instant untilClosedAt,
-                               @Parameter(hidden = true) Pageable pageable) {
+                               @ParameterObject Pageable pageable) {
         return issueService.findAll(title, state, authorId, sinceCreatedAt, untilCreatedAt, sinceUpdatedAt, untilUpdatedAt,
                 sinceClosedAt, untilClosedAt, pageable).getContent();
     }
 
     @Operation(
-            summary = "Issue of a given id",
-            description = "Issue of a given id",
-            tags = {"issue", "get"}
+            summary = "Find an issue by its id",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Issue of Id",
-                    content = {@Content(schema = @Schema(implementation = Issue.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Issue not found",
-                    content = {@Content(schema = @Schema())})})
+    @ApiResponse(
+            responseCode = "200",
+            description = "The found issue"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Issue not found",
+            content = @Content
+    )
     @GetMapping("/{id}")
     public Issue findById(@PathVariable String id) {
         return issueService.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -88,20 +75,18 @@ public class IssueController {
 
     @Operation(
             summary = "Get issue comments",
-            description = "List of all comments of the specified issue",
+            description = "List all comments of the specified issue",
             tags = {"Comment", "get"}
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Comment list",
-            content = @Content(schema = @Schema(implementation = Comment.class), mediaType = "application/json")
+            description = "The comment list"
     )
     @ApiResponse(
             responseCode = "404",
             description = "Issue not found",
             content = @Content
     )
-    @PageableAsQueryParam
     @GetMapping("/{id}/comments")
     public List<Comment> findAll(@PathVariable String id,
                                  @RequestParam(required = false) String authorId,
@@ -109,7 +94,7 @@ public class IssueController {
                                  @RequestParam(required = false) Instant untilCreatedAt,
                                  @RequestParam(required = false) Instant sinceUpdatedAt,
                                  @RequestParam(required = false) Instant untilUpdatedAt,
-                                 @Parameter(hidden = true) Pageable pageable) {
+                                 @ParameterObject Pageable pageable) {
         if (!this.issueRepository.existsById(id))
             throw new EntityNotFoundException();
 

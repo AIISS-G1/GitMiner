@@ -4,13 +4,10 @@ import aiss.gitminer.exception.EntityNotFoundException;
 import aiss.gitminer.model.User;
 import aiss.gitminer.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +18,7 @@ import java.util.List;
 
 @Tag(name = "User", description = "User Management API")
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users", produces = "application/json")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -31,41 +28,31 @@ public class UserController {
     }
 
     @Operation(
-            summary = "List of users",
-            description = "List of all users",
-            tags = {"user", "get"}
+            summary = "List all users",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "User list",
-                    content = {@Content(schema = @Schema(implementation = User.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "User not found",
-                    content = {@Content(schema = @Schema())})})
-    @PageableAsQueryParam
+    @ApiResponse(
+            responseCode = "200",
+            description = "The user list"
+    )
     @GetMapping
-    public List<User> findAll(@Parameter(hidden = true) Pageable pageable) {
+    public List<User> findAll(@ParameterObject Pageable pageable) {
         return userRepository.findAll(pageable).getContent();
     }
 
     @Operation(
-            summary = "User of a given id",
-            description = "User of a given id",
-            tags = {"user", "get"}
+            summary = "Find an user by its id",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "User of Id",
-                    content = {@Content(schema = @Schema(implementation = User.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "User not found",
-                    content = {@Content(schema = @Schema())})})
+    @ApiResponse(
+            responseCode = "200",
+            description = "The found user"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = @Content
+    )
     @GetMapping("/{id}")
     public User findById(@PathVariable String id) {
         return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);

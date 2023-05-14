@@ -8,13 +8,11 @@ import aiss.gitminer.repository.ProjectRepository;
 import aiss.gitminer.service.CommitService;
 import aiss.gitminer.service.IssueService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,7 @@ import java.util.Map;
 
 @Tag(name = "Project", description = "Project Management API")
 @RestController
-@RequestMapping("/projects")
+@RequestMapping(value = "/projects", produces = "application/json")
 public class ProjectController {
 
     private final ProjectRepository projectRepository;
@@ -45,61 +43,49 @@ public class ProjectController {
 
     @Operation(
             summary = "Create a project",
-            description = "Create a project",
-            tags = {"project", "post"}
+            tags = "post"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Project successfully created",
-                    content = {@Content(schema = @Schema(implementation = Project.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Project not successfully created",
-                    content = {@Content(schema = @Schema())})})
+    @ApiResponse(
+            responseCode = "201",
+            description = "Project successfully created"
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Project validation error",
+            content = @Content(schema = @Schema(example = "{\"errors\": [\"string\"]}"), mediaType = "application/json")
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Project create(@RequestBody Project project) {
+    public Project create(@Valid @RequestBody Project project) {
         return projectRepository.save(project);
     }
 
     @Operation(
-            summary = "List of projects",
-            description = "List of all projects",
-            tags = {"project", "get"}
+            summary = "List all projects",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Project list",
-                    content = {@Content(schema = @Schema(implementation = Project.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Project not found",
-                    content = {@Content(schema = @Schema())})})
-    @PageableAsQueryParam
+    @ApiResponse(
+            responseCode = "200",
+            description = "Project list"
+    )
     @GetMapping
-    public List<Project> findAll(@Parameter(hidden = true) Pageable pageable) {
+    public List<Project> findAll(@ParameterObject Pageable pageable) {
         return projectRepository.findAll(pageable).getContent();
     }
 
     @Operation(
-            summary = "Project of a given id",
-            description = "Project of a given id",
-            tags = {"project", "get"}
+            summary = "Find a project by its id",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Project of Id",
-                    content = {@Content(schema = @Schema(implementation = Project.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Project not found",
-                    content = {@Content(schema = @Schema())})})
+    @ApiResponse(
+            responseCode = "200",
+            description = "The found project"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Project not found",
+            content = @Content
+    )
     @GetMapping("/{id}")
     public Project findById(@PathVariable String id) {
         return projectRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -107,20 +93,18 @@ public class ProjectController {
 
     @Operation(
             summary = "Get project commits",
-            description = "List of all commits of the specified project",
+            description = "List all commits of the specified project",
             tags = {"Commit", "get"}
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Commit list",
-            content = @Content(schema = @Schema(implementation = Commit.class), mediaType = "application/json")
+            description = "The commit list"
     )
     @ApiResponse(
             responseCode = "404",
             description = "Project not found",
-            content = @Content()
+            content = @Content
     )
-    @PageableAsQueryParam
     @GetMapping("/{id}/commits")
     public List<Commit> findCommits(@PathVariable String id,
                                     @RequestParam(required = false) String authorEmail,
@@ -129,7 +113,7 @@ public class ProjectController {
                                     @RequestParam(required = false) Instant untilAuthoredDate,
                                     @RequestParam(required = false) Instant sinceCommittedDate,
                                     @RequestParam(required = false) Instant untilCommittedDate,
-                                    @Parameter(hidden = true) Pageable pageable) {
+                                    @ParameterObject Pageable pageable) {
         if (!this.projectRepository.existsById(id))
             throw new EntityNotFoundException();
 
@@ -139,20 +123,18 @@ public class ProjectController {
 
     @Operation(
             summary = "Get project issues",
-            description = "List of all issues of the specified project",
+            description = "List all issues of the specified project",
             tags = {"Issue", "get"}
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Issue list",
-            content = @Content(schema = @Schema(implementation = Issue.class), mediaType = "application/json")
+            description = "The issue list"
     )
     @ApiResponse(
             responseCode = "404",
             description = "Project not found",
-            content = @Content()
+            content = @Content
     )
-    @PageableAsQueryParam
     @GetMapping("/{id}/issues")
     public List<Issue> findIssues(@PathVariable String id,
                                   @RequestParam(required = false) String title,
@@ -164,7 +146,7 @@ public class ProjectController {
                                   @RequestParam(required = false) Instant untilUpdatedAt,
                                   @RequestParam(required = false) Instant sinceClosedAt,
                                   @RequestParam(required = false) Instant untilClosedAt,
-                                  @Parameter(hidden = true) Pageable pageable) {
+                                  @ParameterObject Pageable pageable) {
         if (!this.projectRepository.existsById(id))
             throw new EntityNotFoundException();
 

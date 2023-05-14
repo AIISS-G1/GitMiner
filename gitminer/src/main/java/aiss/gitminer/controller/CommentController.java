@@ -4,13 +4,10 @@ import aiss.gitminer.exception.EntityNotFoundException;
 import aiss.gitminer.model.Comment;
 import aiss.gitminer.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +16,7 @@ import java.util.List;
 
 @Tag(name = "Comment", description = "Comment Management API")
 @RestController
-@RequestMapping("/comments")
+@RequestMapping(value = "/comments", produces = "application/json")
 public class CommentController {
 
     private final CommentService commentService;
@@ -29,46 +26,38 @@ public class CommentController {
     }
 
     @Operation(
-            summary = "List of comments",
-            description = "List of all comments",
-            tags = {"comment", "get"}
+            summary = "List all comments",
+            description = "List all comments",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Comment list",
-                    content = {@Content(schema = @Schema(implementation = Comment.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Comment not found",
-                    content = {@Content(schema = @Schema())})})
-    @PageableAsQueryParam
+    @ApiResponse(
+            responseCode = "200",
+            description = "The comment list"
+    )
     @GetMapping
     public List<Comment> findAll(@RequestParam(required = false) String authorId,
                                  @RequestParam(required = false) Instant sinceCreatedAt,
                                  @RequestParam(required = false) Instant untilCreatedAt,
                                  @RequestParam(required = false) Instant sinceUpdatedAt,
                                  @RequestParam(required = false) Instant untilUpdatedAt,
-                                 @Parameter(hidden = true) Pageable pageable) {
+                                 @ParameterObject Pageable pageable) {
         return commentService.findAll(authorId, sinceCreatedAt, untilCreatedAt, sinceUpdatedAt, untilUpdatedAt, pageable).getContent();
     }
 
     @Operation(
-            summary = "Comment of a given id",
-            description = "Comment of a given id",
-            tags = {"comment", "get"}
+            summary = "Find a comment by its id",
+            description = "Find a comment by its id",
+            tags = "get"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Comment of Id",
-                    content = {@Content(schema = @Schema(implementation = Comment.class),
-                            mediaType = "application/json")}),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Comment not found",
-                    content = {@Content(schema = @Schema())})})
+    @ApiResponse(
+            responseCode = "200",
+            description = "The found comment"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Comment not found",
+            content = @Content
+    )
     @GetMapping("/{id}")
     public Comment findById(@PathVariable String id) {
         return commentService.findById(id).orElseThrow(EntityNotFoundException::new);
