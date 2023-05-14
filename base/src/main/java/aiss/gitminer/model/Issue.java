@@ -3,6 +3,8 @@ package aiss.gitminer.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -27,20 +29,20 @@ public class Issue {
     private String state;
 
     @JsonProperty("created_at")
-    private String createdAt;
+    private Instant createdAt;
 
     @JsonProperty("updated_at")
-    private String updatedAt;
+    private Instant updatedAt;
 
     @JsonProperty("closed_at")
-    private String closedAt;
+    private Instant closedAt;
 
     @JsonProperty("labels")
     @ElementCollection
     private List<String> labels;
 
     @JsonProperty("author")
-    //@NotEmpty(message = "The author of the issue cannot be empty")
+    @NotNull(message = "The author of the issue cannot be empty")
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     @OneToOne(cascade = CascadeType.ALL)
     private User author;
@@ -68,8 +70,8 @@ public class Issue {
         // Constructor for Jackson
     }
 
-    public Issue(String id, String refId, String title, String description, String state, String createdAt,
-                 String updatedAt, String closedAt, List<String> labels, User author, User assignee, Integer upvotes,
+    public Issue(String id, String refId, String title, String description, String state, Instant createdAt,
+                 Instant updatedAt, Instant closedAt, List<String> labels, User author, User assignee, Integer upvotes,
                  Integer downvotes, String webUrl, List<Comment> comments) {
         this.id = id;
         this.refId = refId;
@@ -128,27 +130,27 @@ public class Issue {
         this.state = state;
     }
 
-    public String getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public String getClosedAt() {
+    public Instant getClosedAt() {
         return closedAt;
     }
 
-    public void setClosedAt(String closedAt) {
+    public void setClosedAt(Instant closedAt) {
         this.closedAt = closedAt;
     }
 
