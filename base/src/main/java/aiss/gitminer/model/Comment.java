@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -82,6 +83,18 @@ public class Comment {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Comment comment)) return false;
+        return Objects.equals(id, comment.id) && Objects.equals(body, comment.body) && Objects.equals(author, comment.author) && Objects.equals(createdAt, comment.createdAt) && Objects.equals(updatedAt, comment.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, body, author, createdAt, updatedAt);
     }
 
     @Override

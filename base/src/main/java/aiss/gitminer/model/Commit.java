@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -148,6 +149,18 @@ public class Commit {
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Commit commit)) return false;
+        return Objects.equals(id, commit.id) && Objects.equals(title, commit.title) && Objects.equals(message, commit.message) && Objects.equals(authorName, commit.authorName) && Objects.equals(authorEmail, commit.authorEmail) && Objects.equals(authoredDate, commit.authoredDate) && Objects.equals(committerName, commit.committerName) && Objects.equals(committerEmail, commit.committerEmail) && Objects.equals(committedDate, commit.committedDate) && Objects.equals(webUrl, commit.webUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, message, authorName, authorEmail, authoredDate, committerName, committerEmail, committedDate, webUrl);
     }
 
     @Override

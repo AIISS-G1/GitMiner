@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -208,6 +209,18 @@ public class Issue {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Issue issue)) return false;
+        return Objects.equals(id, issue.id) && Objects.equals(refId, issue.refId) && Objects.equals(title, issue.title) && Objects.equals(description, issue.description) && Objects.equals(state, issue.state) && Objects.equals(createdAt, issue.createdAt) && Objects.equals(updatedAt, issue.updatedAt) && Objects.equals(closedAt, issue.closedAt) && Objects.equals(labels, issue.labels) && Objects.equals(author, issue.author) && Objects.equals(assignee, issue.assignee) && Objects.equals(upvotes, issue.upvotes) && Objects.equals(downvotes, issue.downvotes) && Objects.equals(webUrl, issue.webUrl) && Objects.equals(comments, issue.comments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, refId, title, description, state, createdAt, updatedAt, closedAt, labels, author, assignee, upvotes, downvotes, webUrl, comments);
     }
 
     @Override

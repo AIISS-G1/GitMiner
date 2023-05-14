@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -86,6 +87,18 @@ public class Project {
 
     public void setIssues(List<Issue> issues) {
         this.issues = issues;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Project project)) return false;
+        return Objects.equals(id, project.id) && Objects.equals(name, project.name) && Objects.equals(webUrl, project.webUrl) && Objects.equals(commits, project.commits) && Objects.equals(issues, project.issues);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, webUrl, commits, issues);
     }
 
     @Override

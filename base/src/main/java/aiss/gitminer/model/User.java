@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import java.util.Objects;
 
 @Entity
 @Table(name = "GMUser")     // Watch out: User is a reserved keyword in H2
@@ -78,6 +79,18 @@ public class User {
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(name, user.name) && Objects.equals(avatarUrl, user.avatarUrl) && Objects.equals(webUrl, user.webUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, name, avatarUrl, webUrl);
     }
 
     @Override
