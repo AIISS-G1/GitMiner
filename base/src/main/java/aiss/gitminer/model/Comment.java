@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.Instant;
 
 @Entity
 @Table
@@ -24,17 +26,17 @@ public class Comment {
     private User author;
 
     @JsonProperty("created_at")
-    @NotEmpty(message = "The field created_at cannot be empty.")
-    private String createdAt;
+    @NotNull(message = "The field created_at cannot be null.")
+    private Instant createdAt;
 
     @JsonProperty("updated_at")
-    private String updatedAt;
+    private Instant updatedAt;
 
     public Comment() {
         // Constructor for Jackson
     }
 
-    public Comment(String id, String body, User author, String createdAt, String updatedAt) {
+    public Comment(String id, String body, User author, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.body = body;
         this.author = author;
@@ -66,19 +68,19 @@ public class Comment {
         this.author = author;
     }
 
-    public String getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 
