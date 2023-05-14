@@ -88,13 +88,13 @@ public class IssueController {
             content = @Content
     )
     @GetMapping("/{id}/comments")
-    public List<Comment> findAll(@PathVariable String id,
-                                 @RequestParam(required = false) String authorId,
-                                 @RequestParam(required = false) Instant sinceCreatedAt,
-                                 @RequestParam(required = false) Instant untilCreatedAt,
-                                 @RequestParam(required = false) Instant sinceUpdatedAt,
-                                 @RequestParam(required = false) Instant untilUpdatedAt,
-                                 @ParameterObject Pageable pageable) {
+    public List<Comment> findComments(@PathVariable String id,
+                                      @RequestParam(required = false) String authorId,
+                                      @RequestParam(required = false) Instant sinceCreatedAt,
+                                      @RequestParam(required = false) Instant untilCreatedAt,
+                                      @RequestParam(required = false) Instant sinceUpdatedAt,
+                                      @RequestParam(required = false) Instant untilUpdatedAt,
+                                      @ParameterObject Pageable pageable) {
         if (!this.issueRepository.existsById(id))
             throw new EntityNotFoundException();
 
