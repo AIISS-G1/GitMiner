@@ -2,7 +2,7 @@ package aiss.gitminer.controller;
 
 import aiss.gitminer.exception.EntityNotFoundException;
 import aiss.gitminer.model.Comment;
-import aiss.gitminer.repository.CommentRepository;
+import aiss.gitminer.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,11 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @Tag(name = "Comment", description = "Comment Management API")
@@ -24,10 +22,10 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentController {
 
-    private final CommentRepository commentRepository;
+    private final CommentService commentService;
 
-    public CommentController(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
     }
 
     @Operation(
@@ -47,8 +45,13 @@ public class CommentController {
                     content = {@Content(schema = @Schema())})})
     @PageableAsQueryParam
     @GetMapping
-    public List<Comment> findAll(@Parameter(hidden = true) Pageable pageable) {
-        return commentRepository.findAll(pageable).getContent();
+    public List<Comment> findAll(@RequestParam(required = false) String authorId,
+                                 @RequestParam(required = false) Instant sinceCreatedAt,
+                                 @RequestParam(required = false) Instant untilCreatedAt,
+                                 @RequestParam(required = false) Instant sinceUpdatedAt,
+                                 @RequestParam(required = false) Instant untilUpdatedAt,
+                                 @Parameter(hidden = true) Pageable pageable) {
+        return commentService.findAll(authorId, sinceCreatedAt, untilCreatedAt, sinceUpdatedAt, untilUpdatedAt, pageable).getContent();
     }
 
     @Operation(
@@ -68,6 +71,6 @@ public class CommentController {
                     content = {@Content(schema = @Schema())})})
     @GetMapping("/{id}")
     public Comment findById(@PathVariable String id) {
-        return commentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return commentService.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 }
