@@ -139,7 +139,7 @@ public class ProjectController {
     @ApiResponse(
             responseCode = "200",
             description = "Issue list",
-            content = @Content(schema = @Schema(implementation = Issue[].class), mediaType = "application/json")
+            content = @Content(schema = @Schema(implementation = Issue.class), mediaType = "application/json")
     )
     @ApiResponse(
             responseCode = "404",
