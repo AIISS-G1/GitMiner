@@ -17,9 +17,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +32,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProjectController.class)
@@ -49,14 +52,31 @@ class ProjectControllerTest {
 
     @BeforeEach
     void setUp() {
-        dummyProject = new Project();
-        dummyProject.setId(UUID.randomUUID().toString());
+        dummyProject = new Project(UUID.randomUUID().toString(), "Foo", "https://bar.baz/", Collections.emptyList(), Collections.emptyList());
 
         dummyCommit = new Commit();
         dummyCommit.setId(UUID.randomUUID().toString());
 
         dummyIssue = new Issue();
         dummyIssue.setId(UUID.randomUUID().toString());
+    }
+
+    @Test
+    public void givenValidProject_whenCallingCreate_projectIsSaved() throws Exception {
+        when(projectRepository.save(dummyProject)).thenReturn(dummyProject);
+
+        MvcResult result = mockMvc.perform(post("/projects").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dummyProject)))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        assertThat(objectMapper.readValue(result.getResponse().getContentAsString(), Project.class)).isEqualTo(dummyProject);
+        verify(projectRepository).save(dummyProject);
+    }
+
+    @Test
+    public void givenInvalidProject_whenCallingCreate_projectIsSaved() throws Exception {
+        mockMvc.perform(post("/projects").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new Project())))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
