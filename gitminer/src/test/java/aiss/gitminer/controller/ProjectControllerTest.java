@@ -74,7 +74,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    public void givenInvalidProject_whenCallingCreate_projectIsSaved() throws Exception {
+    public void givenInvalidProject_whenCallingCreate_throwsMethodArgumentNotValidException() throws Exception {
         mockMvc.perform(post("/projects").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new Project())))
                 .andExpect(status().isBadRequest());
     }
